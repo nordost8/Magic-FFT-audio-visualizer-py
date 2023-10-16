@@ -24,6 +24,7 @@ class StreamAnalyzer:
     def __init__(self,
                  FFT_window_size_ms=50,
                  audio_path=None,
+                 background_path=None,
                  updates_per_second=100,
                  smoothing_length_ms=50,
                  n_frequency_bins=51,
@@ -37,6 +38,7 @@ class StreamAnalyzer:
         self.window_ratio = window_ratio
         self.ready_frame_callback = ready_frame_callback
         self.audio_path = audio_path
+        self.background_path = background_path
 
         # Creating a stream instance to calculate and obtain the frame rate, etc.:
         self.stream_reader = StreamReader(

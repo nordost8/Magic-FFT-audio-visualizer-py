@@ -9,10 +9,6 @@ import pygame
 from PIL import Image
 from matplotlib import cm
 
-TEMP_FRAMES_PATH = 'fft_analyzer/temp/frames/'
-BACKGROUND_PATH = 'resource/image.png'
-
-
 class Spectrum_Visualizer:
     """
     The Spectrum_Visualizer visualizes spectral FFT data using a simple PyGame GUI
@@ -20,7 +16,9 @@ class Spectrum_Visualizer:
     nummer = 1
 
     def __init__(self, ear):
-
+        self.screen = None
+        self.prev_additional_surface = None
+        self.additional_surface = None
         self.background_image = None
         self.ear = ear
         window_ratio = self.ear.window_ratio
@@ -94,12 +92,8 @@ class Spectrum_Visualizer:
         self.running_line_font = pygame.font.Font(None, 20)
         self.running_line_surface = self.running_line_font.render(self.running_line_text, True, (255, 255, 255))
 
-        if os.path.exists(TEMP_FRAMES_PATH):
-            shutil.rmtree(TEMP_FRAMES_PATH)
-            os.mkdir(TEMP_FRAMES_PATH)
-
         self.screen = pygame.display.set_mode((self.WIDTH, self.MAIN_SCREEN_HEIGHT))
-        self.background_image = pygame.image.load(BACKGROUND_PATH)
+        self.background_image = pygame.image.load(self.ear.background_path)
         self.background_image = pygame.transform.scale(self.background_image, (self.WIDTH, self.MAIN_SCREEN_HEIGHT))
         self.screen.blit(self.background_image, (0, 0))
 
