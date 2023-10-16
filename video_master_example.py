@@ -141,7 +141,7 @@ def run():
         for audio_name in render_needed:
             audio_path = audios[audio_name]
             audio_path_enchanted = enchant_audio(audio_path, audio_name)
-            background_path = os.path.join(ROOT_DIRECTORY, 'resource/image.png')
+            background_path = os.path.join(ROOT_DIRECTORY, 'resource/image.jpg')
             dw = DynamicWriter(audio_path=audio_path_enchanted, audio_name=audio_name)
             fft_analyzer.fft_analyzer(audio_path=audio_path_enchanted, background_path=background_path,
                                       ready_frame_callback=dw.ready_frame_callback)
