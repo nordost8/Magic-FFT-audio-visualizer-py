@@ -3,7 +3,7 @@ import pyaudio
 import time
 from collections import deque
 from pydub import AudioSegment
-from fft_analyzer.src.utils import *
+from utils import *
 import os
 
 ROOT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
@@ -52,25 +52,13 @@ class StreamReader:
         # it should be twice as large.
         self.data_buffer = numpy_data_buffer(self.data_windows_to_buffer, self.update_window_n_frames)
 
-        self.py_audio_stream = self.pa.open(
-            format=self.pa.get_format_from_width(self.audio.sample_width),
-            # When reading from a file, it is TWO TIMES larger than when reading from a microphone.
-            # The buffer is not prepared for such a size; the buffer is optimized for microphone input:
-            channels=self.audio.channels,
-            rate=self.rate,
-            output=True,
-            frames_per_buffer=int(self.update_window_n_frames / 2),
-        )
+        print("\n-- Starting audio reading...\n")
 
-        print("\n-- Starting live audio stream...\n")
-
-        self.py_audio_stream.start_stream()
         self.stream_start_time = time.time()
         time.sleep(math.nextafter(0, 1))  # smallest positive value
-
         total_frames_to_read = int(self.audio.duration_seconds * self.audio.frame_rate)
         frame_count_total = 0
-        while self.py_audio_stream.is_active():
+        while True:
             frame_count = int(self.update_window_n_frames / 2)
             data = self.wf.readframes(frame_count)
             if self.data_buffer is not None:
@@ -88,14 +76,8 @@ class StreamReader:
                     print(e)
                     self.new_data = ENDE_FLAG
                     self.analyzer_cls_link.visualizer.stop()
-                    return None, pyaudio.paAbort
-                self.new_data = True
+                    break
 
                 if self.analyzer_cls_link is not None:
+                    self.new_data = True
                     self.analyzer_cls_link.get_audio_features()
-
-    def terminate(self):
-        print("Sending stream termination command...")
-        self.py_audio_stream.stop_stream()
-        self.py_audio_stream.close()
-        self.pa.terminate()

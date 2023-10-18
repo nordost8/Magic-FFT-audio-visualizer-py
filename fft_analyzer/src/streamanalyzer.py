@@ -1,10 +1,10 @@
 import time
 from scipy.signal import savgol_filter
 
-from fft_analyzer.src.stream_reader_pyaudio import StreamReader
-from fft_analyzer.src.visualizer import Spectrum_Visualizer
-from fft_analyzer.src.fft import getFFT
-from fft_analyzer.src.utils import *
+from stream_reader import StreamReader
+from visualizer import Spectrum_Visualizer
+from fft import getFFT
+from utils import *
 
 
 class StreamAnalyzer:
@@ -126,11 +126,9 @@ class StreamAnalyzer:
         self.visualizer = Spectrum_Visualizer(self)
         self.visualizer.start()
         self.stream_reader.start_audio_reading(self.data_windows_to_buffer)
-        self.stream_reader.terminate()
         print("Animation clips generated")
 
     def update_rolling_stats(self):
-        pass
         self.rolling_bin_values.append_data(self.frequency_bin_energies)
         self.bin_mean_values = np.mean(self.rolling_bin_values.get_buffer_data(), axis=0)
         self.bin_mean_values = np.maximum((1 - self.equalizer_strength) * np.mean(self.bin_mean_values),
